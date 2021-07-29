@@ -21,7 +21,7 @@ def get_acc(jy):
     if accz>=k:
         accz-=2*k
 
-    return (accx,accy,accz)
+    return (accx,accy,accz)#acceleration读取加速度
 
 def get_gyro(jy):
     raw_gyx=jy.read_i2c_block_data(address,0x37,2)
@@ -40,7 +40,7 @@ def get_gyro(jy):
     if gyz>=k:
         gyz-=2*k
 
-    return (gyx,gyy,gyz)
+    return (gyx,gyy,gyz)#读取角加速度
 
 def get_angle(jy):
     raw_angx=jy.read_i2c_block_data(address,0x3d,2)
@@ -59,7 +59,7 @@ def get_angle(jy):
     if angz>=k:
         angz-=2*k
 
-    return (angx,angy,angz)
+    return (angx,angy,angz)#读取角度
 
 def get_longitude(jy):
     raw_lgh=jy.read_i2c_block_data(address,0x4a,1)
@@ -67,7 +67,7 @@ def get_longitude(jy):
 
     k=100
     lg=(raw_lgh[0]<<8|raw_lgl[0])/k
-    return (lg)
+    return (lg)#读取经纬度，暂时不用
 
 while(1):
     print("Acc:",get_acc(jy))
