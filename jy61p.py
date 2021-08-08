@@ -1,11 +1,12 @@
 import time
 import smbus
+import sys
 
-address=0x50
+address=0x50#设置地址
 jy=smbus.SMBus(1)
 
-def get_acc(jy):
-    raw_accx=jy.read_i2c_block_data(address,0x34,2)
+def get_acc(jy):#读取三方向的加速度
+    raw_accx=jy.read_i2c_block_data(address,0x34,2)#借助该函数读取数据块（共2字节），储存在列表中
     raw_accy=jy.read_i2c_block_data(address,0x35,2)
     raw_accz=jy.read_i2c_block_data(address,0x36,2)
 
@@ -21,9 +22,9 @@ def get_acc(jy):
     if accz>=k:
         accz-=2*k
 
-    return (accx,accy,accz)
+    return accx,accy,accz
 
-def get_gyro(jy):
+def get_gyro(jy):#读取三方向的角速度
     raw_gyx=jy.read_i2c_block_data(address,0x37,2)
     raw_gyy=jy.read_i2c_block_data(address,0x38,2)
     raw_gyz=jy.read_i2c_block_data(address,0x39,2)
@@ -40,9 +41,9 @@ def get_gyro(jy):
     if gyz>=k:
         gyz-=2*k
 
-    return (gyx,gyy,gyz)
+    return gyx,gyy,gyz
 
-def get_angle(jy):
+def get_angle(jy):#读取三方向的角度
     raw_angx=jy.read_i2c_block_data(address,0x3d,2)
     raw_angy=jy.read_i2c_block_data(address,0x3d,2)
     raw_angz=jy.read_i2c_block_data(address,0x3d,2)
@@ -58,21 +59,28 @@ def get_angle(jy):
         angy-=2*k
     if angz>=k:
         angz-=2*k
-
-    return (angx,angy,angz)
-
-def get_longitude(jy):
-    raw_lgh=jy.read_i2c_block_data(address,0x4a,1)
-    raw_lgl=jy.read_i2c_block_data(address,0x40,1)
-
-    k=100
-    lg=(raw_lgh[0]<<8|raw_lgl[0])/k
-    return (lg)
+    return angx,angy,angz
 
 while(1):
-    print("Acc:",get_acc(jy))
-    print("Gyro:",get_gyro(jy))
-    print("Angle:",get_angle(jy))
-    #print("longitude",get_longitude(jy))
-    print('\n')
-    time.sleep(0.2)
+    with open("out.txt",'a',encoding="utf-8") as f:
+        f.write(str(time.time()))
+        f.write(str(get_acc(jy)))
+        f.write(str(get_gyro(jy)))
+        f.write(str(get_angle(jy)))
+        time.sleep(0.2)
+        f.write(str('\n'))
+
+#with open("out.txt",'w',encoding="utf-8") as f:
+#    f.write(str(time.time()))
+#    f.write(str(get_acc(jy)))
+#    f.write(str(get_gyro(jy)))
+#    f.write(str(get_angle(jy)))
+#    time.sleep(0.2)
+    
+#while(1):
+#    print("Acc:",get_acc(jy))
+#    print("Gyro:",get_gyro(jy))
+#    print("Angle:",get_angle(jy))
+#    #print("longitude",get_longitude(jy))
+#    print('\n')
+#    time.sleep(0.2)
